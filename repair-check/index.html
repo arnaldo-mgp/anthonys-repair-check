@@ -172,9 +172,16 @@
     border-right: 1.5px solid var(--muted); border-top: 1.5px solid var(--muted);
     transform: rotate(45deg); transition: border-color .15s ease;
   }
-  .opt:hover, .opt[aria-pressed="true"] { border-color: rgba(227, 27, 35, .45); background: var(--card-hi); }
-  .opt:hover::before, .opt[aria-pressed="true"]::before { transform: scaleY(1); }
-  .opt:hover::after { border-color: var(--red-text); }
+  .opt[aria-pressed="true"] { border-color: rgba(227, 27, 35, .45); background: var(--card-hi); }
+  .opt[aria-pressed="true"]::before { transform: scaleY(1); }
+  /* Hover only where there is a real pointer: on touch it sticks to the option under the finger on the next screen. */
+  @media (hover: hover) {
+    .opt:hover { border-color: rgba(227, 27, 35, .45); background: var(--card-hi); }
+    .opt:hover::before { transform: scaleY(1); }
+    .opt:hover::after { border-color: var(--red-text); }
+    .opt:hover .ico { border-color: rgba(227, 27, 35, .5); background: rgba(227, 27, 35, .1); }
+    .day:hover, .slot:hover { border-color: rgba(227, 27, 35, .5); }
+  }
   .opt small { display: block; color: var(--muted); font-size: 13.5px; font-weight: 400; margin-top: 2px; }
   .opt .txt { flex: 1; min-width: 0; }
   .ico {
@@ -183,8 +190,13 @@
     color: var(--red-text); transition: border-color .15s ease, background .15s ease;
   }
   .ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-  .opt:hover .ico, .opt[aria-pressed="true"] .ico { border-color: rgba(227, 27, 35, .5); background: rgba(227, 27, 35, .1); }
-  .grid .opt { justify-content: center; text-align: center; min-height: 56px; padding: 12px 10px; font-size: 14.5px; }
+  .opt[aria-pressed="true"] .ico { border-color: rgba(227, 27, 35, .5); background: rgba(227, 27, 35, .1); }
+  .grid .opt { justify-content: flex-start; text-align: left; min-height: 56px; padding: 10px 10px 10px 12px; gap: 10px; font-size: 14px; }
+  .brand-logo { flex: none; display: block; width: 30px; height: 22px; object-fit: contain; opacity: .92; }
+  .brand-logo.wordmark { width: 56px; height: 16px; object-position: left center; }
+  .brand-logo.blank { visibility: hidden; }
+  .ico.img { width: 52px; height: 52px; padding: 3px; }
+  .ico.img img { display: block; width: 100%; height: 100%; object-fit: contain; }
   .grid .opt::after { display: none; }
 
   /* Proof */
@@ -229,7 +241,7 @@
   .form-intro { color: var(--muted); font-size: 15px; margin: 0 0 22px; }
   fieldset.pick { border: 0; padding: 0; margin: 0 0 18px; min-width: 0; }
   fieldset.pick legend { padding: 0; font: 700 12px/1.5 var(--body); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px; color: rgba(255, 255, 255, .85); }
-  .days { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .days { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 14px; margin: 0 -2px; scroll-snap-type: x proximity; scrollbar-width: thin; }
   .day {
     flex: none; width: 64px; padding: 10px 4px; scroll-snap-align: start;
     background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 12px;
@@ -242,7 +254,6 @@
     min-height: 44px; padding: 8px 4px; font-size: 14px; font-weight: 700;
     background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
   }
-  .day:hover, .slot:hover { border-color: rgba(227, 27, 35, .5); }
   .day[aria-pressed="true"], .slot[aria-pressed="true"] { background: var(--red); border-color: var(--red); }
   .day[aria-pressed="true"] .dow { color: #fff; }
   .slots-empty { grid-column: 1 / -1; margin: 0; padding: 14px; text-align: center; color: var(--muted); font-size: 14px; border: 1px dashed var(--line); border-radius: 10px; }
@@ -355,9 +366,6 @@
   };
   // Option icons (Lucide, ISC license). Key: question:value.
   var SVG = {
-    car: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
-    spray: '<path d="M3 3h.01"/><path d="M7 5h.01"/><path d="M11 7h.01"/><path d="M3 7h.01"/><path d="M7 9h.01"/><path d="M3 11h.01"/><rect width="4" height="4" x="15" y="5"/><path d="m19 9 2 2v10c0 .6-.4 1-1 1h-6c-.6 0-1-.4-1-1V11l2-2"/><path d="m13 14 8-2"/><path d="m13 19 8-2"/>',
-    wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
     help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
     shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
     users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
@@ -369,8 +377,19 @@
     calendar: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
     clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'
   };
+  // 3D icons from the services section of anthonysautocraft.com (assets/icons).
+  var OPTION_IMAGES = {
+    "situation:collision": "collision", "situation:minor": "dent", "situation:redo": "bodyrepair", "situation:unsure": "frame"
+  };
+  // Brand logos in assets/brands: Simple Icons SVGs (CC0) or white silhouettes (.webp).
+  var BRAND_LOGOS = {
+    "Tesla": "tesla.svg", "Mercedes-Benz": "mercedes.svg", "BMW": "bmw.svg", "Subaru": "subaru.svg", "Ford": "ford.svg",
+    "Lincoln": "lincoln.webp", "Cadillac": "cadillac.svg", "Chevrolet": "chevrolet.svg", "Buick": "buick.webp",
+    "GMC": "gmc.webp", "Land Rover": "landrover.svg", "Jaguar": "jaguar.svg", "Maserati": "maserati.svg",
+    "Alfa Romeo": "alfaromeo.svg", "Bentley": "bentley.svg", "Lamborghini": "lamborghini.svg", "Rivian": "rivian.webp"
+  };
+  var WORDMARK_ONLY = { "GMC": true };  // the logo is the name itself
   var OPTION_ICONS = {
-    "situation:collision": "car", "situation:minor": "spray", "situation:redo": "wrench", "situation:unsure": "help",
     "insurance:own": "shield", "insurance:other": "users", "insurance:self": "wallet", "insurance:unsure": "help",
     "referral:yes": "store", "referral:no": "xcircle", "referral:notyet": "file",
     "timing:asap": "zap", "timing:weeks": "calendar", "timing:flexible": "clock"
@@ -543,14 +562,25 @@
       proofList(["15+ factory certifications", "Not an insurance DRP shop", "Best of Marin 2025"]);
   }
 
+  function optionArt(id, v) {
+    var key = id + ":" + v;
+    if (OPTION_IMAGES[key]) return '<span class="ico img" aria-hidden="true"><img src="assets/icons/' + OPTION_IMAGES[key] + '.webp" width="46" height="46" alt="" decoding="async"></span>';
+    if (OPTION_ICONS[key]) return '<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">' + SVG[OPTION_ICONS[key]] + "</svg></span>";
+    if (id === "make") return BRAND_LOGOS[v]
+      ? '<img class="brand-logo' + (WORDMARK_ONLY[v] ? " wordmark" : "") + '" src="assets/brands/' + BRAND_LOGOS[v] + '" alt="" width="30" height="22" decoding="async">'
+      : '<span class="brand-logo blank" aria-hidden="true"></span>';
+    return "";
+  }
+
   function renderQuestion(id) {
     var q = QUESTIONS[id];
     var seq = activeOrder();
     var opts = q.options.map(function (o) {
       var pressed = answers[id] === o[0] ? "true" : "false";
       return '<li><button type="button" class="opt" aria-pressed="' + pressed + '" data-q="' + id + '" data-v="' + esc(o[0]) + '">' +
-        (OPTION_ICONS[id + ":" + o[0]] ? '<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">' + SVG[OPTION_ICONS[id + ":" + o[0]]] + "</svg></span>" : "") +
-        '<span class="txt">' + esc(o[1]) + (o[2] ? "<small>" + esc(o[2]) + "</small>" : "") + "</span></button></li>";
+        optionArt(id, o[0]) +
+        (id === "make" && WORDMARK_ONLY[o[0]] ? '<span class="visually-hidden">' + esc(o[1]) + "</span>"
+          : '<span class="txt">' + esc(o[1]) + (o[2] ? "<small>" + esc(o[2]) + "</small>" : "") + "</span>") + "</button></li>";
     }).join("");
     return backButton() +
       stepper(seq.indexOf(id) + 1, seq.length) +
