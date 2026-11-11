@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Collision Repair Check | Anthony's Auto Craft, San Rafael</title>
+<meta name="description" content="Had a collision? Take the 60-second repair check from Anthony's Auto Craft in San Rafael, CA, and know your options before you pick a body shop.">
+<meta name="theme-color" content="#050505">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f1012'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='700' font-size='20' text-anchor='middle' fill='%23e8432e'%3EA%3C/text%3E%3C/svg%3E">
+
+<script>
+  // Site config: fill these in before publishing.
+  window.QUIZ_CONFIG = {
+    ENDPOINT: "",   // Google Apps Script Web App URL (ends in /exec)
+    GTM_ID: ""      // e.g. "GTM-XXXXXXX"; leave empty to disable GTM
+  };
+  window.dataLayer = window.dataLayer || [];
+  (function (id) {
+    if (!id) return;
+    window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(id);
+    document.head.appendChild(s);
+  })(window.QUIZ_CONFIG.GTM_ID);
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Michroma&family=Poppins:wght@300;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Michroma&family=Poppins:wght@300;600;700&display=swap"></noscript>
+
+<style>
+  :root {
+    --bg: #050505;
+    --card: rgba(14, 14, 14, .92);
+    --card-hi: rgba(22, 22, 22, .95);
+    --line: rgba(255, 255, 255, .1);
+    --line-soft: rgba(255, 255, 255, .06);
+    --text: #ffffff;
+    --muted: rgba(255, 255, 255, .68);
+    --red: #e31b23;
+    --red-hover: #c2141b;
+    --red-text: #f0343b;
+    --green: #5fbf8f;
+    --error: #ff8a8f;
+    --radius: 18px;
+    --head: "Michroma", "Arial Black", Arial, sans-serif;
+    --body: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ui: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(120% 60% at 100% 0%, rgba(227, 27, 35, .14), transparent 60%),
+      radial-gradient(80% 40% at 0% 100%, rgba(227, 27, 35, .06), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    font: 400 16px/1.6 var(--body);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a { color: var(--text); }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--red-text); outline-offset: 3px; }
+
+  .visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+
+  /* Header: floating glass bar like the main site */
+  .site-header { position: sticky; top: 0; z-index: 10; padding: 9px 12px 0; }
+  .header-bar {
+    max-width: 1100px; margin: 0 auto; min-height: 72px; padding: 0 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: rgba(10, 10, 12, .9);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, .13); border-radius: 17px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .08);
+  }
+  .logo { display: block; height: 20px; width: auto; }
+  .tagline {
+    font: 300 12px/1.5 var(--ui); letter-spacing: .06em;
+    color: var(--muted); text-align: right;
+  }
+  .stepper { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 18px; }
+  .stepper .step-count { margin: 0; }
+  .segments { display: flex; gap: 6px; align-items: center; }
+  .segments span { width: 18px; height: 2px; background: rgba(255, 255, 255, .18); transition: width .3s ease, background .3s ease; }
+  .segments .done { background: rgba(227, 27, 35, .55); }
+  .segments .now { width: 44px; background: var(--red); }
+
+  /* Layout */
+  main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 28px 20px 56px; }
+  .screen { animation: enter .35s ease both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .screen { animation: none; }
+    .segments span { transition: none; }
+  }
+
+  .back {
+    background: none; border: 0; padding: 8px 0; margin: 0 0 18px;
+    color: var(--muted); font: 600 10.9px/1.6 var(--ui); letter-spacing: 3.5px; text-transform: uppercase;
+    cursor: pointer;
+  }
+  .back:hover { color: var(--text); }
+
+  .eyebrow {
+    font: 600 10.9px/1.6 var(--ui); letter-spacing: 6px; text-transform: uppercase;
+    color: var(--red-text); margin: 0 0 16px;
+  }
+  .eyebrow.green { color: var(--green); }
+  h1, h2 { font-family: var(--head); line-height: 1.25; margin: 0; }
+  h1 { font-weight: 500; letter-spacing: -.015em; }
+  h2 { font-weight: 700; }
+  h1 { font-size: clamp(25px, 7vw, 38px); }
+  h2 { font-size: clamp(21px, 5.4vw, 28px); }
+  h1:focus, h2:focus { outline: none; }
+  .rule { display: block; width: 40px; height: 2px; background: var(--red); margin: 18px 0 20px; border: 0; }
+  .lead { color: var(--muted); font: 300 15px/1.75 var(--ui); letter-spacing: .2px; margin: 0 0 30px; }
+  .step-count {
+    font: 600 10.9px/1.6 var(--ui); letter-spacing: 3.5px; text-transform: uppercase; white-space: nowrap; color: var(--red-text); margin: 0 0 14px;
+  }
+  .hint { color: var(--muted); margin: 0 0 24px; }
+
+  /* Intro: red side rule like the hero */
+  .intro-block { position: relative; padding-left: 20px; }
+  .intro-block::before {
+    content: ""; position: absolute; left: 0; top: 4px; bottom: 4px; width: 2px; background: var(--red);
+  }
+
+  /* Buttons: square, uppercase, tracked (site CTA) */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 45px; padding: 13px 28px;
+    background: var(--red); color: #fff; border: 1px solid var(--red); border-radius: 0;
+    font: 700 11.2px/1.5 var(--ui); letter-spacing: 3.5px; text-transform: uppercase;
+    cursor: pointer; transition: background .15s ease, border-color .15s ease;
+  }
+  .btn:hover { background: var(--red-hover); border-color: var(--red-hover); }
+  .btn[disabled] { background: var(--red-hover); cursor: progress; opacity: .85; }
+  .form-card .btn { width: 100%; min-height: 50px; }
+  .call-inline { display: inline-block; margin: 18px 0 0; font-size: 15px; letter-spacing: .04em; text-decoration: none; color: var(--text); }
+  .call-inline:hover { color: var(--red-text); }
+
+  .options { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .options.grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (min-width: 520px) { .options.grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .opt {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; min-height: 64px; padding: 18px 20px 18px 22px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+    text-align: left; font-size: 16px; font-weight: 400; cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .opt::before {
+    content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 2px;
+    background: var(--red); transform: scaleY(0); transform-origin: top; transition: transform .2s ease;
+  }
+  .opt::after {
+    content: ""; flex: none; width: 7px; height: 7px;
+    border-right: 1.5px solid var(--muted); border-top: 1.5px solid var(--muted);
+    transform: rotate(45deg); transition: border-color .15s ease;
+  }
+  .opt:hover, .opt[aria-pressed="true"] { border-color: rgba(227, 27, 35, .45); background: var(--card-hi); }
+  .opt:hover::before, .opt[aria-pressed="true"]::before { transform: scaleY(1); }
+  .opt:hover::after { border-color: var(--red-text); }
+  .opt small { display: block; color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+  .grid .opt { justify-content: center; text-align: center; min-height: 56px; padding: 12px 10px; font-size: 14.5px; }
+  .grid .opt::after { display: none; }
+
+  /* Proof */
+  .proof {
+    display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 36px 0 0; padding: 22px 0 0;
+    border-top: 1px solid var(--line-soft); list-style: none;
+    color: var(--muted); font: 400 12px/1.5 var(--body); letter-spacing: .8px; text-transform: uppercase;
+  }
+  .proof li { display: flex; align-items: center; gap: 10px; }
+  .proof svg { flex: none; color: var(--red-text); }
+
+  /* Result cards: numbered dark cards like the services section */
+  .cards { display: grid; gap: 14px; margin: 4px 0 36px; }
+  .card {
+    position: relative; overflow: hidden;
+    background: radial-gradient(90% 70% at 100% 0%, rgba(227, 27, 35, .08), transparent 60%), var(--card);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 18px 40px rgba(0, 0, 0, .45);
+    padding: 26px 24px 26px 26px;
+  }
+  .card::before { content: ""; position: absolute; left: 0; top: 28px; height: 64px; width: 2px; background: var(--red); }
+  .card .num { display: block; font: 400 13px/1 var(--head); letter-spacing: .25em; color: var(--red-text); margin-bottom: 14px; }
+  .card h3 { font: 400 17px/1.4 var(--head); margin: 0; }
+  .card .rule { margin: 14px 0 14px; width: 32px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15.5px; line-height: 1.7; }
+  .card.next { background: radial-gradient(90% 70% at 100% 0%, rgba(95, 191, 143, .1), transparent 60%), var(--card); border-color: rgba(95, 191, 143, .3); }
+  .card.next::before, .card.next .rule { background: var(--green); }
+  .card.next .num, .card.next h3 { color: var(--green); }
+
+  /* Form */
+  .form-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 18px 40px rgba(0, 0, 0, .45);
+    padding: 28px 22px;
+  }
+  .form-card h3 { font: 400 18px/1.35 var(--head); margin: 0; }
+  .form-card .rule { margin: 14px 0 22px; width: 32px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font: 700 12px/1.5 var(--body); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px; color: rgba(255, 255, 255, .85); }
+  .field label .opt-tag { color: var(--muted); font-weight: 400; letter-spacing: .1em; }
+  .field input, .field select {
+    width: 100%; min-height: 52px; padding: 12px 14px;
+    background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 10px;
+    font-size: 16px;
+  }
+  .field input::placeholder { color: rgba(255, 255, 255, .35); }
+  .field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 40px; }
+  .field select option { background: #111; }
+  .field input:focus, .field select:focus { border-color: var(--red); outline: none; box-shadow: 0 0 0 3px rgba(227, 27, 35, .3); }
+  .field input[aria-invalid="true"] { border-color: var(--error); }
+  .err { color: var(--error); font-size: 13.5px; margin: 6px 0 0; }
+  .err:empty { display: none; }
+  .form-error { color: var(--error); font-weight: 600; margin: 14px 0 0; text-align: center; }
+  .form-error:empty { display: none; }
+  .form-error a { color: var(--error); }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .call { text-align: center; margin: 20px 0 0; font-size: 14.5px; }
+  .call a { font-weight: 600; color: var(--text); }
+  .call .hours { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .legal { color: var(--muted); font-size: 12.5px; margin: 22px 0 0; text-align: center; }
+  .change { display: block; margin: 22px auto 0; padding: 10px; }
+
+  .done-proof { margin-top: 30px; }
+</style>
+</head>
+<body>
+<a class="visually-hidden" href="#app">Skip to content</a>
+<header class="site-header">
+  <div class="header-bar">
+    <img class="logo" src="assets/logo.svg" width="155" height="20" alt="Anthony's Auto Craft">
+    <div class="tagline">San Rafael, CA<br>Since the 1970s</div>
+  </div>
+</header>
+
+<main id="app" tabindex="-1"></main>
+
+<noscript>
+  <p style="max-width:640px;margin:0 auto;padding:0 16px 40px;color:#a3a6ab">This check needs JavaScript. Call us at <a href="tel:+14154567591">(415) 456-7591</a>.</p>
+</noscript>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Editable lists -----------------------------------------------------
+  var CERTIFIED_MAKES = [
+    "Tesla", "Mercedes-Benz", "BMW", "Subaru", "Ford", "Lincoln", "Cadillac", "Chevrolet",
+    "Buick", "GMC", "Land Rover", "Jaguar", "Maserati", "Alfa Romeo", "Bentley", "Lamborghini"
+  ];
+  var EV_MAKES = ["Rivian", "Lucid"];
+  var PHONE_DISPLAY = "(415) 456-7591";
+  var PHONE_TEL = "tel:+14154567591";
+
+  // ---- Questions ----------------------------------------------------------
+  var QUESTIONS = {
+    situation: {
+      title: "What happened to your car?",
+      options: [
+        ["collision", "Accident or collision"],
+        ["minor", "Dent, scratch or minor damage"],
+        ["redo", "A previous repair I'm not happy with"],
+        ["unsure", "I'm not sure yet"]
+      ]
+    },
+    make: {
+      title: "What do you drive?",
+      grid: true,
+      options: CERTIFIED_MAKES.concat(EV_MAKES).map(function (m) { return [m, m]; }).concat([["Other", "Other make"]])
+    },
+    adas: {
+      title: "Does your car have driver-assist features?",
+      hint: "Lane keeping, adaptive cruise control, parking sensors, blind-spot alerts or a 360° camera.",
+      options: [["yes", "Yes"], ["no", "No"], ["unsure", "Not sure"]]
+    },
+    insurance: {
+      title: "How are you paying for the repair?",
+      options: [
+        ["own", "Claim with my insurance"],
+        ["other", "Claim with the other driver's insurance"],
+        ["self", "Paying out of pocket"],
+        ["unsure", "Haven't decided yet"]
+      ]
+    },
+    referral: {
+      title: "Has an insurance company recommended a body shop?",
+      options: [
+        ["yes", "Yes, they suggested a shop", "Or said I should use their network"],
+        ["no", "No"],
+        ["notyet", "Not yet, I haven't filed"]
+      ]
+    },
+    timing: {
+      title: "When do you need your car back?",
+      options: [["asap", "As soon as possible"], ["weeks", "In the next few weeks"], ["flexible", "I'm flexible"]]
+    }
+  };
+  var ORDER = ["situation", "make", "adas", "insurance", "referral", "timing"];
+
+  // ---- State --------------------------------------------------------------
+  var answers = {};
+  var lead = { name: "", phone: "", email: "", best_time: "" };
+  var history = [];
+  var current = null;
+  var resultShownAt = 0;
+
+  var app = document.getElementById("app");
+  window.dataLayer = window.dataLayer || [];
+
+  // ---- Attribution (first visit in this session wins) ----------------------
+  var TRACK_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid", "ndclid"];
+  var attribution = (function () {
+    var stored = null;
+    try { stored = JSON.parse(sessionStorage.getItem("aac_attribution") || "null"); } catch (e) {}
+    if (stored) return stored;
+    var params = new URLSearchParams(location.search);
+    var data = { landing_url: location.href, referrer: document.referrer || "" };
+    TRACK_KEYS.forEach(function (k) { data[k] = params.get(k) || ""; });
+    try { sessionStorage.setItem("aac_attribution", JSON.stringify(data)); } catch (e) {}
+    return data;
+  })();
+
+  // ---- Helpers ------------------------------------------------------------
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function activeOrder() {
+    return ORDER.filter(function (q) { return !(q === "referral" && answers.insurance === "self"); });
+  }
+  function nextAfter(id) {
+    var seq = activeOrder();
+    var i = seq.indexOf(id);
+    return seq[i + 1] || "result";
+  }
+  function track(event, data) {
+    var o = { event: event };
+    for (var k in data) o[k] = data[k];
+    window.dataLayer.push(o);
+  }
+  function digits(s) { return String(s).replace(/\D/g, ""); }
+  function normalizePhone(s) {
+    var d = digits(s);
+    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    return d;
+  }
+  function formatPhone(s) {
+    var d = normalizePhone(s).slice(0, 10);
+    if (d.length < 4) return d;
+    if (d.length < 7) return "(" + d.slice(0, 3) + ") " + d.slice(3);
+    return "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
+  }
+  var CHECK = '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function proofList(items, cls) {
+    return '<ul class="proof ' + (cls || "") + '">' + items.map(function (t) { return "<li>" + CHECK + esc(t) + "</li>"; }).join("") + "</ul>";
+  }
+  function stepper(n, total) {
+    var segs = "";
+    for (var i = 1; i <= total; i++) segs += "<span" + (i < n ? ' class="done"' : i === n ? ' class="now"' : "") + "></span>";
+    return '<div class="stepper"><p class="step-count">Question ' + n + " of " + total + "</p>" +
+      '<div class="segments" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + n + '">' + segs + "</div></div>";
+  }
+  function backButton(label) {
+    return '<button type="button" class="back" data-action="back">' + esc(label || "← Back") + "</button>";
+  }
+
+  // ---- Navigation ---------------------------------------------------------
+  function go(id) {
+    if (current) history.push(current);
+    show(id);
+  }
+  function back() {
+    if (history.length) show(history.pop());
+  }
+  function show(id) {
+    current = id;
+    var html;
+    if (id === "intro") html = renderIntro();
+    else if (id === "result") html = renderResult();
+    else if (id === "done") html = renderDone();
+    else html = renderQuestion(id);
+
+    app.innerHTML = '<section class="screen ' + id + '">' + html + "</section>";
+    window.scrollTo(0, 0);
+    var h = app.querySelector("h1, h2");
+    if (h && id !== "intro") { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+
+    track("quiz_step", { step: id });
+    if (id === "result") {
+      resultShownAt = Date.now();
+      bindForm();
+      track("quiz_complete", payloadAnswers());
+    }
+  }
+
+  // ---- Screens ------------------------------------------------------------
+  function renderIntro() {
+    return '<div class="intro-block"><p class="eyebrow">60-second repair check</p>' +
+      "<h1>Had a collision? Know your options before you pick a shop.</h1>" +
+      '<span class="rule" aria-hidden="true"></span>' +
+      '<p class="lead">Answer a few quick questions to see what your car needs to be repaired right, and what your insurance company can\'t decide for you.</p>' +
+      '<button type="button" class="btn" data-action="start">Start the check →</button></div>' +
+      proofList(["15+ factory certifications", "Not an insurance DRP shop", "Best of Marin 2025"]);
+  }
+
+  function renderQuestion(id) {
+    var q = QUESTIONS[id];
+    var seq = activeOrder();
+    var opts = q.options.map(function (o) {
+      var pressed = answers[id] === o[0] ? "true" : "false";
+      return '<li><button type="button" class="opt" aria-pressed="' + pressed + '" data-q="' + id + '" data-v="' + esc(o[0]) + '">' +
+        "<span>" + esc(o[1]) + (o[2] ? "<small>" + esc(o[2]) + "</small>" : "") + "</span></button></li>";
+    }).join("");
+    return backButton() +
+      stepper(seq.indexOf(id) + 1, seq.length) +
+      "<h2>" + esc(q.title) + "</h2>" +
+      '<span class="rule" aria-hidden="true"></span>' +
+      (q.hint ? '<p class="hint">' + esc(q.hint) + "</p>" : "") +
+      '<ul class="options' + (q.grid ? " grid" : "") + '">' + opts + "</ul>";
+  }
+
+  function buildCards(a) {
+    var cards = [];
+    var make = a.make;
+
+    if (CERTIFIED_MAKES.indexOf(make) > -1) {
+      cards.push(["Factory-certified for " + make, "Anthony's holds a " + make + " factory certification. Your car is repaired with the manufacturer's procedures, OEM parts and the right equipment, so it fits, looks and protects you the way it did from the factory."]);
+    } else if (EV_MAKES.indexOf(make) > -1) {
+      cards.push(["EV repair experience", "We repair electric vehicles, including " + make + ". EV repairs need specific procedures around the battery and high-voltage systems, and we'll walk you through the plan in person."]);
+    } else {
+      cards.push(["Repaired to factory standards", "With 15+ factory certifications, our technicians are trained on manufacturer repair procedures. We'll confirm the right repair plan for your car during your visit."]);
+    }
+
+    if (a.insurance === "self") {
+      cards.push(["A clear estimate before any work", "Paying out of pocket? We'll inspect your car in person and give you a written estimate before we start, so there are no surprises."]);
+    } else if (a.referral === "yes") {
+      cards.push(["You choose the shop, not your insurer", "In California, an insurance company can recommend a body shop, but it can't require you to use one (California Insurance Code §758.5). We're not part of any insurance DRP program. We work for you."]);
+    } else {
+      cards.push(["Know your right to choose", "If your insurer suggests a shop, remember: in California the choice is yours (California Insurance Code §758.5). We help you with the claim, but we work for you, not the insurance company."]);
+    }
+
+    if (a.adas === "yes" || a.adas === "unsure") {
+      cards.push(["Your safety sensors matter", "Cameras and sensors near the damaged area often need to be checked and calibrated after a repair to work correctly. We check them as part of your repair plan."]);
+    }
+    if (a.situation === "redo") {
+      cards.push(["A second look at a previous repair", "Uneven panel gaps, paint that doesn't match or parts that don't line up are common signs of a rushed repair. Bring your car in and we'll inspect it with you."]);
+    }
+    if (a.timing === "asap") {
+      cards.push(["Need it back fast?", "Let us know when we call. We'll find the earliest time to see your car and give you a realistic timeline from day one."]);
+    }
+    cards.push(["Next step: a free in-person estimate", "Every repair is different, so we look at your car in person before giving you a number. Leave your details and we'll call you to book a time.", "next"]);
+    return cards;
+  }
+
+  function renderResult() {
+    var a = payloadAnswers();
+    var title = a.make && a.make !== "Other" ? "Here's what matters for your " + a.make + " repair" : "Here's what matters for your repair";
+    var cards = buildCards(a).map(function (c, i) {
+      return '<article class="card' + (c[2] ? " " + c[2] : "") + '"><span class="num" aria-hidden="true">' + (i < 9 ? "0" : "") + (i + 1) + "</span>" +
+        "<h3>" + esc(c[0]) + '</h3><span class="rule" aria-hidden="true"></span><p>' + esc(c[1]) + "</p></article>";
+    }).join("");
+
+    return backButton() +
+      '<p class="eyebrow">Your repair check</p>' +
+      "<h2>" + esc(title) + "</h2>" +
+      '<span class="rule" aria-hidden="true"></span>' +
+      '<div class="cards">' + cards + "</div>" +
+      '<form class="form-card" id="lead-form" novalidate>' +
+        "<h3>Request a call to book your visit</h3>" +
+        '<span class="rule" aria-hidden="true"></span>' +
+        '<div class="hp" aria-hidden="true"><label for="f-company">Company</label><input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off"></div>' +
+        '<div class="field"><label for="f-name">First name</label>' +
+          '<input id="f-name" name="name" type="text" autocomplete="given-name" required aria-describedby="e-name" value="' + esc(lead.name) + '">' +
+          '<p class="err" id="e-name" aria-live="polite"></p></div>' +
+        '<div class="field"><label for="f-phone">Phone</label>' +
+          '<input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(415) 555-1234" required aria-describedby="e-phone" value="' + esc(lead.phone) + '">' +
+          '<p class="err" id="e-phone" aria-live="polite"></p></div>' +
+        '<div class="field"><label for="f-email">Email <span class="opt-tag">(optional)</span></label>' +
+          '<input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="e-email" value="' + esc(lead.email) + '">' +
+          '<p class="err" id="e-email" aria-live="polite"></p></div>' +
+        '<div class="field"><label for="f-time">Best time to call</label>' +
+          '<select id="f-time" name="best_time">' +
+            ["", "Morning", "Midday", "Afternoon"].map(function (t) {
+              return '<option value="' + t + '"' + (lead.best_time === t ? " selected" : "") + ">" + (t || "No preference") + "</option>";
+            }).join("") +
+          "</select></div>" +
+        '<button type="submit" class="btn" id="f-submit">Request my appointment</button>' +
+        '<p class="form-error" id="form-error" role="alert"></p>' +
+        '<p class="call">Prefer to talk now? Call <a href="' + PHONE_TEL + '">' + PHONE_DISPLAY + "</a>" +
+          '<span class="hours">Monday to Friday, 7 AM to 5 PM · 111 Verdi St, San Rafael</span></p>' +
+      "</form>" +
+      '<p class="legal">This check is general information, not legal or insurance advice. Coverage depends on your policy and claim.</p>' +
+      '<button type="button" class="back change" data-action="back">← Change my answers</button>';
+  }
+
+  function renderDone() {
+    return '<p class="eyebrow green">Request received</p>' +
+      '<h2>Thanks, <span id="done-name"></span>! We\'ll call you soon.</h2>' +
+      '<span class="rule" aria-hidden="true"></span>' +
+      '<p class="lead">Our team will reach out during business hours (Monday to Friday, 7 AM to 5 PM) to schedule your visit. If it\'s urgent, call us at <a href="' + PHONE_TEL + '">' + PHONE_DISPLAY + "</a>.</p>" +
+      proofList(["15+ factory certifications", "We work for you, not the insurance company"], "done-proof");
+  }
+
+  // ---- Form ---------------------------------------------------------------
+  function payloadAnswers() {
+    return {
+      situation: answers.situation || "",
+      make: answers.make || "",
+      adas: answers.adas || "",
+      insurance: answers.insurance || "",
+      referral: answers.insurance === "self" ? "" : (answers.referral || ""),
+      timing: answers.timing || ""
+    };
+  }
+
+  function bindForm() {
+    var form = document.getElementById("lead-form");
+    var phone = form.elements.phone;
+
+    form.addEventListener("input", function (e) {
+      var t = e.target;
+      if (t === phone) t.value = formatPhone(t.value);
+      if (t.name in lead) lead[t.name] = t.value;
+      if (t.getAttribute("aria-invalid") === "true") setErr(t, "");
+    });
+    form.addEventListener("change", function (e) {
+      if (e.target.name in lead) lead[e.target.name] = e.target.value;
+    });
+    form.addEventListener("submit", submit);
+  }
+
+  function setErr(input, msg) {
+    document.getElementById("e-" + input.name).textContent = msg;
+    input.setAttribute("aria-invalid", msg ? "true" : "false");
+  }
+
+  function validate(form) {
+    var f = form.elements;
+    var firstBad = null;
+    var name = f.name.value.trim();
+    var phone = normalizePhone(f.phone.value);
+    var email = f.email.value.trim();
+
+    setErr(f.name, name ? "" : "Please enter your first name.");
+    if (!name) firstBad = firstBad || f.name;
+    var phoneOk = phone.length >= 10;
+    setErr(f.phone, phoneOk ? "" : "Please enter a valid phone number.");
+    if (!phoneOk) firstBad = firstBad || f.phone;
+    var emailOk = !email || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    setErr(f.email, emailOk ? "" : "Please enter a valid email address.");
+    if (!emailOk) firstBad = firstBad || f.email;
+
+    if (firstBad) { firstBad.focus(); return null; }
+    return { name: name, phone: phone, email: email, best_time: f.best_time.value };
+  }
+
+  function finish(name) {
+    go("done");
+    document.getElementById("done-name").textContent = name;
+  }
+
+  function submit(e) {
+    e.preventDefault();
+    var form = e.currentTarget;
+    var btn = document.getElementById("f-submit");
+    var formError = document.getElementById("form-error");
+    if (btn.disabled) return;
+    formError.textContent = "";
+
+    var data = validate(form);
+    if (!data) return;
+
+    // Bots: a filled honeypot gets the normal confirmation and nothing is sent.
+    if (form.elements.company.value) { finish(data.name); return; }
+    // Submitted under 3s after the result opened: ignore; a real person can just tap again.
+    if (Date.now() - resultShownAt < 3000) return;
+
+    var a = payloadAnswers();
+    var payload = {
+      name: data.name,
+      phone: data.phone,
+      email: data.email,
+      best_time: data.best_time,
+      answers: a
+    };
+    TRACK_KEYS.forEach(function (k) { payload[k] = attribution[k] || ""; });
+    payload.landing_url = attribution.landing_url || location.href;
+    payload.referrer = attribution.referrer || "";
+    payload.submitted_at = new Date().toISOString();
+
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+
+    var endpoint = (window.QUIZ_CONFIG || {}).ENDPOINT;
+    var request = endpoint
+      ? fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+          .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+          .then(function (j) { if (!j || j.ok !== true) throw new Error("Rejected"); })
+      : Promise.reject(new Error("No endpoint configured"));
+
+    request.then(function () {
+      track("quiz_lead", { make: a.make, insurance: a.insurance });
+      finish(data.name);
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "Request my appointment";
+      formError.innerHTML = 'Something went wrong. Please call us at <a href="' + PHONE_TEL + '">' + PHONE_DISPLAY + "</a>.";
+    });
+  }
+
+  // ---- Events -------------------------------------------------------------
+  app.addEventListener("click", function (e) {
+    var el = e.target.closest("button");
+    if (!el || el.type === "submit") return;
+    var action = el.getAttribute("data-action");
+    if (action === "start") return go("situation");
+    if (action === "back") return back();
+    var q = el.getAttribute("data-q");
+    if (q) {
+      answers[q] = el.getAttribute("data-v");
+      go(nextAfter(q));
+    }
+  });
+
+  show("intro");
+})();
+</script>
+</body>
+</html>
