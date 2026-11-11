@@ -28,8 +28,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Michroma&family=Poppins:wght@300;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Michroma&family=Poppins:wght@300;600;700&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Michroma&family=Poppins:wght@400;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Michroma&family=Poppins:wght@400;600;700&display=swap"></noscript>
 
 <style>
   :root {
@@ -39,7 +39,7 @@
     --line: rgba(255, 255, 255, .1);
     --line-soft: rgba(255, 255, 255, .06);
     --text: #ffffff;
-    --muted: rgba(255, 255, 255, .68);
+    --muted: rgba(255, 255, 255, .74);
     --red: #e31b23;
     --red-hover: #c2141b;
     --red-text: #f0343b;
@@ -76,9 +76,9 @@
   }
 
   /* Header: floating glass bar like the main site */
-  .site-header { position: sticky; top: 0; z-index: 10; padding: 9px 12px 0; }
+  .site-header { position: sticky; top: 0; z-index: 10; padding: 9px 20px 0; }
   .header-bar {
-    max-width: 1100px; margin: 0 auto; min-height: 72px; padding: 0 22px;
+    max-width: 640px; margin: 0 auto; min-height: 72px; padding: 0 22px;
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     background: rgba(10, 10, 12, .9);
     -webkit-backdrop-filter: blur(20px) saturate(1.4); backdrop-filter: blur(20px) saturate(1.4);
@@ -87,7 +87,7 @@
   }
   .logo { display: block; height: 20px; width: auto; }
   .tagline {
-    font: 300 12px/1.5 var(--ui); letter-spacing: .06em;
+    font: 400 12px/1.5 var(--ui); letter-spacing: .06em;
     color: var(--muted); text-align: right;
   }
   .stepper { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 18px; }
@@ -125,7 +125,7 @@
   h2 { font-size: clamp(21px, 5.4vw, 28px); }
   h1:focus, h2:focus { outline: none; }
   .rule { display: block; width: 40px; height: 2px; background: var(--red); margin: 18px 0 20px; border: 0; }
-  .lead { color: var(--muted); font: 300 15px/1.75 var(--ui); letter-spacing: .2px; margin: 0 0 30px; }
+  .lead { color: var(--muted); font: 400 15px/1.75 var(--ui); letter-spacing: .2px; margin: 0 0 30px; }
   .step-count {
     font: 600 10.9px/1.6 var(--ui); letter-spacing: 3.5px; text-transform: uppercase; white-space: nowrap; color: var(--red-text); margin: 0 0 14px;
   }
@@ -157,10 +157,10 @@
   .opt {
     position: relative; overflow: hidden;
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    width: 100%; min-height: 64px; padding: 18px 20px 18px 22px;
+    width: 100%; min-height: 72px; padding: 14px 20px 14px 14px; gap: 14px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
-    text-align: left; font-size: 16px; font-weight: 400; cursor: pointer;
+    text-align: left; font-size: 16px; font-weight: 700; cursor: pointer;
     transition: border-color .15s ease, background .15s ease;
   }
   .opt::before {
@@ -175,7 +175,15 @@
   .opt:hover, .opt[aria-pressed="true"] { border-color: rgba(227, 27, 35, .45); background: var(--card-hi); }
   .opt:hover::before, .opt[aria-pressed="true"]::before { transform: scaleY(1); }
   .opt:hover::after { border-color: var(--red-text); }
-  .opt small { display: block; color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+  .opt small { display: block; color: var(--muted); font-size: 13.5px; font-weight: 400; margin-top: 2px; }
+  .opt .txt { flex: 1; min-width: 0; }
+  .ico {
+    flex: none; display: grid; place-items: center; width: 44px; height: 44px;
+    border-radius: 12px; border: 1px solid var(--line); background: rgba(255, 255, 255, .04);
+    color: var(--red-text); transition: border-color .15s ease, background .15s ease;
+  }
+  .ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .opt:hover .ico, .opt[aria-pressed="true"] .ico { border-color: rgba(227, 27, 35, .5); background: rgba(227, 27, 35, .1); }
   .grid .opt { justify-content: center; text-align: center; min-height: 56px; padding: 12px 10px; font-size: 14.5px; }
   .grid .opt::after { display: none; }
 
@@ -344,6 +352,28 @@
       title: "When do you need your car back?",
       options: [["asap", "As soon as possible"], ["weeks", "In the next few weeks"], ["flexible", "I'm flexible"]]
     }
+  };
+  // Option icons (Lucide, ISC license). Key: question:value.
+  var SVG = {
+    car: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>',
+    spray: '<path d="M3 3h.01"/><path d="M7 5h.01"/><path d="M11 7h.01"/><path d="M3 7h.01"/><path d="M7 9h.01"/><path d="M3 11h.01"/><rect width="4" height="4" x="15" y="5"/><path d="m19 9 2 2v10c0 .6-.4 1-1 1h-6c-.6 0-1-.4-1-1V11l2-2"/><path d="m13 14 8-2"/><path d="m13 19 8-2"/>',
+    wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    wallet: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+    store: '<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2 2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/>',
+    xcircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+    file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+    zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+    calendar: '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+    clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'
+  };
+  var OPTION_ICONS = {
+    "situation:collision": "car", "situation:minor": "spray", "situation:redo": "wrench", "situation:unsure": "help",
+    "insurance:own": "shield", "insurance:other": "users", "insurance:self": "wallet", "insurance:unsure": "help",
+    "referral:yes": "store", "referral:no": "xcircle", "referral:notyet": "file",
+    "timing:asap": "zap", "timing:weeks": "calendar", "timing:flexible": "clock"
   };
   var ORDER = ["situation", "make", "insurance", "referral", "timing"];
 
@@ -519,7 +549,8 @@
     var opts = q.options.map(function (o) {
       var pressed = answers[id] === o[0] ? "true" : "false";
       return '<li><button type="button" class="opt" aria-pressed="' + pressed + '" data-q="' + id + '" data-v="' + esc(o[0]) + '">' +
-        "<span>" + esc(o[1]) + (o[2] ? "<small>" + esc(o[2]) + "</small>" : "") + "</span></button></li>";
+        (OPTION_ICONS[id + ":" + o[0]] ? '<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">' + SVG[OPTION_ICONS[id + ":" + o[0]]] + "</svg></span>" : "") +
+        '<span class="txt">' + esc(o[1]) + (o[2] ? "<small>" + esc(o[2]) + "</small>" : "") + "</span></button></li>";
     }).join("");
     return backButton() +
       stepper(seq.indexOf(id) + 1, seq.length) +
