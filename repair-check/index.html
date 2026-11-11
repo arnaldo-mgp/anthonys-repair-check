@@ -194,6 +194,7 @@
   .grid .opt { justify-content: flex-start; text-align: left; min-height: 56px; padding: 10px 10px 10px 12px; gap: 10px; font-size: 14px; }
   .brand-logo { flex: none; display: block; width: 30px; height: 22px; object-fit: contain; opacity: .92; }
   .brand-logo.wordmark { width: 56px; height: 16px; object-position: left center; }
+  .brand-logo.wordmark.wide { width: 104px; height: 8px; }  /* thin, wide wordmark (Lucid) */
   .brand-logo.blank { visibility: hidden; }
   .ico.img { width: 52px; height: 52px; padding: 3px; }
   .ico.img img { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -386,9 +387,9 @@
     "Tesla": "tesla.svg", "Mercedes-Benz": "mercedes.svg", "BMW": "bmw.svg", "Subaru": "subaru.svg", "Ford": "ford.svg",
     "Lincoln": "lincoln.webp", "Cadillac": "cadillac.svg", "Chevrolet": "chevrolet.svg", "Buick": "buick.webp",
     "GMC": "gmc.webp", "Land Rover": "landrover.svg", "Jaguar": "jaguar.svg", "Maserati": "maserati.svg",
-    "Alfa Romeo": "alfaromeo.svg", "Bentley": "bentley.svg", "Lamborghini": "lamborghini.svg", "Rivian": "rivian.webp"
+    "Alfa Romeo": "alfaromeo.svg", "Bentley": "bentley.svg", "Lamborghini": "lamborghini.svg", "Rivian": "rivian.webp", "Lucid": "lucid.webp"
   };
-  var WORDMARK_ONLY = { "GMC": true };  // the logo is the name itself
+  var WORDMARK_ONLY = { "GMC": true, "Lucid": "wide" };  // the logo is the name itself
   var OPTION_ICONS = {
     "insurance:own": "shield", "insurance:other": "users", "insurance:self": "wallet", "insurance:unsure": "help",
     "referral:yes": "store", "referral:no": "xcircle", "referral:notyet": "file",
@@ -567,7 +568,7 @@
     if (OPTION_IMAGES[key]) return '<span class="ico img" aria-hidden="true"><img src="assets/icons/' + OPTION_IMAGES[key] + '.webp" width="46" height="46" alt="" decoding="async"></span>';
     if (OPTION_ICONS[key]) return '<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">' + SVG[OPTION_ICONS[key]] + "</svg></span>";
     if (id === "make") return BRAND_LOGOS[v]
-      ? '<img class="brand-logo' + (WORDMARK_ONLY[v] ? " wordmark" : "") + '" src="assets/brands/' + BRAND_LOGOS[v] + '" alt="" width="30" height="22" decoding="async">'
+      ? '<img class="brand-logo' + (WORDMARK_ONLY[v] ? " wordmark" + (WORDMARK_ONLY[v] === "wide" ? " wide" : "") : "") + '" src="assets/brands/' + BRAND_LOGOS[v] + '" alt="" width="30" height="22" decoding="async">'
       : '<span class="brand-logo blank" aria-hidden="true"></span>';
     return "";
   }
