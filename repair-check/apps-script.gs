@@ -15,13 +15,13 @@ const SHEET_NAME = 'Leads';
 
 // Column order follows the quiz payload; answers are split into their own columns.
 const HEADERS = [
-  'name', 'phone', 'email', 'best_time',
-  'situation', 'make', 'adas', 'insurance', 'referral', 'timing',
+  'name', 'phone', 'email', 'appointment_date', 'appointment_time',
+  'situation', 'make', 'insurance', 'referral', 'timing',
   'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
   'gclid', 'fbclid', 'ndclid',
   'landing_url', 'referrer', 'submitted_at',
 ];
-const ANSWER_KEYS = ['situation', 'make', 'adas', 'insurance', 'referral', 'timing'];
+const ANSWER_KEYS = ['situation', 'make', 'insurance', 'referral', 'timing'];
 
 // Human-readable answers for the email.
 const LABELS = {
@@ -33,7 +33,6 @@ const LABELS = {
     unsure: 'Not sure yet',
   },
   make: { _q: 'Vehicle make', Other: 'Other make' },
-  adas: { _q: 'Driver-assist features', yes: 'Yes', no: 'No', unsure: 'Not sure' },
   insurance: {
     _q: 'Paying with',
     own: 'Claim with their own insurance',
@@ -117,6 +116,13 @@ function formatPhone(d) {
   return d.length === 10 ? '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6) : d;
 }
 
+// "2026-11-12" -> "Thursday, November 12, 2026" (date only, no time zone shift).
+function formatDate(iso) {
+  const p = String(iso).split('-').map(Number);
+  if (p.length !== 3 || !p[0]) return String(iso);
+  return Utilities.formatDate(new Date(Date.UTC(p[0], p[1] - 1, p[2], 12)), 'UTC', 'EEEE, MMMM d, yyyy');
+}
+
 function html(s) {
   return String(s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -130,13 +136,13 @@ function sendAlert(f) {
   const make = f.make ? label('make', f.make) : 'no make';
   const subject = 'New repair check lead: ' + f.name + ' (' + make + ')';
   const phonePretty = formatPhone(f.phone);
-  const bestTime = f.best_time || 'No preference';
+  const visit = f.appointment_date ? formatDate(f.appointment_date) + ' at ' + f.appointment_time : 'Not chosen';
 
   const rows = [
     ['Name', html(f.name)],
     ['Phone', '<a href="tel:+1' + f.phone + '">' + html(phonePretty) + '</a>'],
     ['Email', f.email ? '<a href="mailto:' + html(f.email) + '">' + html(f.email) + '</a>' : '-'],
-    ['Best time to call', html(bestTime)],
+    ['Requested visit', '<b>' + html(visit) + '</b>'],
   ];
   ANSWER_KEYS.forEach(function (k) { rows.push([LABELS[k]._q, html(label(k, f[k]))]); });
   const source = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'ndclid']
@@ -151,7 +157,7 @@ function sendAlert(f) {
     '<div style="font-family:Arial,sans-serif;font-size:15px;color:#111">' +
     '<h2 style="margin:0 0 6px">New repair check lead</h2>' +
     '<p style="margin:0 0 16px">Call <a href="tel:+1' + f.phone + '"><b>' + html(phonePretty) + '</b></a> ' +
-    '(' + html(bestTime) + ') to book an in-person estimate.</p>' +
+    'to confirm the in-person estimate requested for <b>' + html(visit) + '</b>.</p>' +
     '<table cellpadding="6" style="border-collapse:collapse">' +
     rows.map(function (r) {
       return '<tr><td style="color:#666;vertical-align:top;white-space:nowrap">' + r[0] + '</td><td>' + r[1] + '</td></tr>';
@@ -170,8 +176,8 @@ function json(obj) {
 // Run once from the editor to authorize the script and check the sheet + email.
 function testLead() {
   const res = doPost({ postData: { contents: JSON.stringify({
-    name: 'Test', phone: '4155551234', email: '', best_time: 'Morning',
-    answers: { situation: 'collision', make: 'Tesla', adas: 'yes', insurance: 'own', referral: 'yes', timing: 'asap' },
+    name: 'Test', phone: '4155551234', email: '', appointment_date: '2026-11-16', appointment_time: '9:30 AM',
+    answers: { situation: 'collision', make: 'Tesla', insurance: 'own', referral: 'yes', timing: 'asap' },
     landing_url: 'https://example.com/repair-check', referrer: '', submitted_at: new Date().toISOString(),
   }) } });
   console.log(res.getContent());

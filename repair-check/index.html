@@ -189,22 +189,58 @@
   .proof svg { flex: none; color: var(--red-text); }
 
   /* Result cards: numbered dark cards like the services section */
-  .cards { display: grid; gap: 14px; margin: 4px 0 36px; }
+  .cards { display: grid; gap: 10px; margin: 4px 0 28px; }
   .card {
     position: relative; overflow: hidden;
     background: radial-gradient(90% 70% at 100% 0%, rgba(227, 27, 35, .08), transparent 60%), var(--card);
     border: 1px solid var(--line); border-radius: var(--radius);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 18px 40px rgba(0, 0, 0, .45);
-    padding: 26px 24px 26px 26px;
+    padding: 20px;
   }
-  .card::before { content: ""; position: absolute; left: 0; top: 28px; height: 64px; width: 2px; background: var(--red); }
-  .card .num { display: block; font: 400 13px/1 var(--head); letter-spacing: .25em; color: var(--red-text); margin-bottom: 14px; }
-  .card h3 { font: 400 17px/1.4 var(--head); margin: 0; }
-  .card .rule { margin: 14px 0 14px; width: 32px; }
-  .card p { margin: 0; color: var(--muted); font-size: 15.5px; line-height: 1.7; }
-  .card.next { background: radial-gradient(90% 70% at 100% 0%, rgba(95, 191, 143, .1), transparent 60%), var(--card); border-color: rgba(95, 191, 143, .3); }
-  .card.next::before, .card.next .rule { background: var(--green); }
-  .card.next .num, .card.next h3 { color: var(--green); }
+  .card { display: grid; grid-template-columns: auto 1fr; gap: 14px; padding: 20px 20px 20px 22px; }
+  .card::before { content: ""; position: absolute; left: 0; top: 22px; height: 40px; width: 2px; background: var(--red); }
+  .card .num { font: 400 12px/1.6 var(--head); letter-spacing: .2em; color: var(--red-text); padding-top: 3px; }
+  .card h3 { font: 400 15.5px/1.4 var(--head); margin: 0 0 6px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+
+  /* Authority screen */
+  .stats { list-style: none; margin: 4px 0 22px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .stats li {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+    padding: 16px 10px; text-align: center;
+  }
+  .stat-num { display: block; font: 700 22px/1.2 var(--head); color: var(--text); margin-bottom: 6px; }
+  .stat-label { display: block; font-size: 12px; line-height: 1.4; color: var(--muted); }
+  .quote { margin: 0 0 6px; padding: 20px 22px; border-left: 2px solid var(--red); background: rgba(255, 255, 255, .03); border-radius: 0 14px 14px 0; }
+  .quote blockquote { margin: 0 0 10px; font-size: 16px; line-height: 1.6; }
+  .quote figcaption { font: 600 10.9px/1.6 var(--ui); letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .badges { margin: 18px 0 28px; }
+
+  /* Visit picker */
+  .form-intro { color: var(--muted); font-size: 15px; margin: 0 0 22px; }
+  fieldset.pick { border: 0; padding: 0; margin: 0 0 18px; min-width: 0; }
+  fieldset.pick legend { padding: 0; font: 700 12px/1.5 var(--body); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px; color: rgba(255, 255, 255, .85); }
+  .days { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .day {
+    flex: none; width: 64px; padding: 10px 4px; scroll-snap-align: start;
+    background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+  }
+  .day .dow { font: 600 10.5px/1.4 var(--ui); letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .day .md { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .slot {
+    min-height: 44px; padding: 8px 4px; font-size: 14px; font-weight: 700;
+    background: rgba(255, 255, 255, .03); border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+  }
+  .day:hover, .slot:hover { border-color: rgba(227, 27, 35, .5); }
+  .day[aria-pressed="true"], .slot[aria-pressed="true"] { background: var(--red); border-color: var(--red); }
+  .day[aria-pressed="true"] .dow { color: #fff; }
+  .slots-empty { grid-column: 1 / -1; margin: 0; padding: 14px; text-align: center; color: var(--muted); font-size: 14px; border: 1px dashed var(--line); border-radius: 10px; }
+  .visit-box { display: inline-flex; flex-direction: column; gap: 4px; margin: 0 0 22px; padding: 14px 18px; border: 1px solid rgba(95, 191, 143, .35); border-left: 2px solid var(--green); border-radius: 0 12px 12px 0; background: rgba(95, 191, 143, .06); }
+  .visit-label { font: 600 10.9px/1.6 var(--ui); letter-spacing: 2px; text-transform: uppercase; color: var(--green); }
+  .visit-when { font-size: 16px; font-weight: 700; }
 
   /* Form */
   .form-card {
@@ -287,11 +323,6 @@
       grid: true,
       options: CERTIFIED_MAKES.concat(EV_MAKES).map(function (m) { return [m, m]; }).concat([["Other", "Other make"]])
     },
-    adas: {
-      title: "Does your car have driver-assist features?",
-      hint: "Lane keeping, adaptive cruise control, parking sensors, blind-spot alerts or a 360° camera.",
-      options: [["yes", "Yes"], ["no", "No"], ["unsure", "Not sure"]]
-    },
     insurance: {
       title: "How are you paying for the repair?",
       options: [
@@ -314,11 +345,19 @@
       options: [["asap", "As soon as possible"], ["weeks", "In the next few weeks"], ["flexible", "I'm flexible"]]
     }
   };
-  var ORDER = ["situation", "make", "adas", "insurance", "referral", "timing"];
+  var ORDER = ["situation", "make", "insurance", "referral", "timing"];
+
+  // Visit scheduling: same rules as the scheduler on anthonysautocraft.com
+  // (weekdays, hourly 7:30 AM to 4:30 PM, shop time zone).
+  var SHOP_TZ = "America/Los_Angeles";
+  var VISIT_DAYS = 10;                 // business days offered
+  var FIRST_SLOT = 7 * 60 + 30;        // minutes after midnight
+  var LAST_SLOT = 16 * 60 + 30;
+  var REVIEW = { text: "I am really pleased with the professionalism, care and quality work at Anthony's!", author: "Mark Johnson", source: "Google review" };
 
   // ---- State --------------------------------------------------------------
   var answers = {};
-  var lead = { name: "", phone: "", email: "", best_time: "" };
+  var lead = { name: "", phone: "", email: "", date: "", time: "" };
   var history = [];
   var current = null;
   var resultShownAt = 0;
@@ -349,9 +388,59 @@
     return ORDER.filter(function (q) { return !(q === "referral" && answers.insurance === "self"); });
   }
   function nextAfter(id) {
+    if (id === "make") return "authority";
+    if (id === "authority") return "insurance";
     var seq = activeOrder();
     var i = seq.indexOf(id);
     return seq[i + 1] || "result";
+  }
+
+  // ---- Visit days and times (shop time zone) ------------------------------
+  function shopNow() {
+    var p = {};
+    new Intl.DateTimeFormat("en-US", { timeZone: SHOP_TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+    return { y: +p.year, m: +p.month, d: +p.day, minutes: +p.hour * 60 + +p.minute };
+  }
+  function slotLabel(min) {
+    var h = Math.floor(min / 60), m = min % 60;
+    return (h % 12 || 12) + ":" + (m < 10 ? "0" : "") + m + " " + (h < 12 ? "AM" : "PM");
+  }
+  function slotsFor(dateIso) {
+    var now = shopNow();
+    var today = now.y + "-" + pad2(now.m) + "-" + pad2(now.d);
+    var out = [];
+    for (var t = FIRST_SLOT; t <= LAST_SLOT; t += 60) {
+      // Same-day visits need at least an hour of notice.
+      if (dateIso === today && t < now.minutes + 60) continue;
+      out.push(slotLabel(t));
+    }
+    return out;
+  }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  // shortcut: shop holidays are not excluded; add a blocked-dates list if the shop asks.
+  function visitDays() {
+    var now = shopNow();
+    var days = [];
+    var t = Date.UTC(now.y, now.m - 1, now.d);
+    while (days.length < VISIT_DAYS) {
+      var d = new Date(t);
+      var wd = d.getUTCDay();
+      var iso = d.toISOString().slice(0, 10);
+      if (wd !== 0 && wd !== 6 && slotsFor(iso).length) {
+        days.push({
+          iso: iso,
+          dow: d.toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" }),
+          md: d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }),
+          long: d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" })
+        });
+      }
+      t += 864e5;
+    }
+    return days;
+  }
+  function dayLong(iso) {
+    return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
   }
   function track(event, data) {
     var o = { event: event };
@@ -398,6 +487,7 @@
     if (id === "intro") html = renderIntro();
     else if (id === "result") html = renderResult();
     else if (id === "done") html = renderDone();
+    else if (id === "authority") html = renderAuthority();
     else html = renderQuestion(id);
 
     app.innerHTML = '<section class="screen ' + id + '">' + html + "</section>";
@@ -439,45 +529,81 @@
       '<ul class="options' + (q.grid ? " grid" : "") + '">' + opts + "</ul>";
   }
 
+  function renderAuthority() {
+    var make = answers.make;
+    var title = CERTIFIED_MAKES.indexOf(make) > -1 ? "Good news: we're factory-certified for " + make + "."
+      : EV_MAKES.indexOf(make) > -1 ? "Yes, we repair " + make + " and other EVs."
+      : "Your car is in experienced hands.";
+    var stats = [["50+", "Years in Marin"], ["15+", "OEM certifications"], ["5★", "Google & Yelp"]];
+    return backButton() +
+      '<p class="eyebrow">Why Marin drivers choose Anthony\'s</p>' +
+      "<h2>" + esc(title) + "</h2>" +
+      '<span class="rule" aria-hidden="true"></span>' +
+      '<ul class="stats">' + stats.map(function (s) {
+        return '<li><span class="stat-num">' + esc(s[0]) + '</span><span class="stat-label">' + esc(s[1]) + "</span></li>";
+      }).join("") + "</ul>" +
+      '<figure class="quote"><blockquote>“' + esc(REVIEW.text) + '”</blockquote>' +
+        "<figcaption>" + esc(REVIEW.author) + " · " + esc(REVIEW.source) + "</figcaption></figure>" +
+      proofList(["I-CAR Gold Class", "Best of Marin 2025", "Not an insurance DRP shop"], "badges") +
+      '<button type="button" class="btn" data-action="continue">Continue →</button>';
+  }
+
+  // Result: brand card, insurance card and at most one extra, short copy.
   function buildCards(a) {
     var cards = [];
     var make = a.make;
 
     if (CERTIFIED_MAKES.indexOf(make) > -1) {
-      cards.push(["Factory-certified for " + make, "Anthony's holds a " + make + " factory certification. Your car is repaired with the manufacturer's procedures, OEM parts and the right equipment, so it fits, looks and protects you the way it did from the factory."]);
+      cards.push(["Factory-certified for " + make, "Repaired with " + make + "'s factory procedures, OEM parts and the right equipment, so it fits, looks and protects you like it did from the factory."]);
     } else if (EV_MAKES.indexOf(make) > -1) {
-      cards.push(["EV repair experience", "We repair electric vehicles, including " + make + ". EV repairs need specific procedures around the battery and high-voltage systems, and we'll walk you through the plan in person."]);
+      cards.push(["EV repair experience", "EV repairs need specific procedures around the battery and high-voltage systems. We'll walk you through the plan in person."]);
     } else {
-      cards.push(["Repaired to factory standards", "With 15+ factory certifications, our technicians are trained on manufacturer repair procedures. We'll confirm the right repair plan for your car during your visit."]);
+      cards.push(["Repaired to factory standards", "Our technicians are trained on manufacturer repair procedures. We'll confirm the right plan for your car at your visit."]);
     }
 
     if (a.insurance === "self") {
-      cards.push(["A clear estimate before any work", "Paying out of pocket? We'll inspect your car in person and give you a written estimate before we start, so there are no surprises."]);
+      cards.push(["A clear estimate before any work", "We inspect your car in person and give you a written estimate before any work starts. No surprises."]);
     } else if (a.referral === "yes") {
-      cards.push(["You choose the shop, not your insurer", "In California, an insurance company can recommend a body shop, but it can't require you to use one (California Insurance Code §758.5). We're not part of any insurance DRP program. We work for you."]);
+      cards.push(["You choose the shop, not your insurer", "Your insurer can recommend a shop, but it can't require one (California Insurance Code §758.5). We're not in any DRP program. We work for you."]);
     } else {
-      cards.push(["Know your right to choose", "If your insurer suggests a shop, remember: in California the choice is yours (California Insurance Code §758.5). We help you with the claim, but we work for you, not the insurance company."]);
+      cards.push(["Know your right to choose", "In California the choice of shop is yours (Insurance Code §758.5). We help with the claim, but we work for you, not the insurer."]);
     }
 
-    if (a.adas === "yes" || a.adas === "unsure") {
-      cards.push(["Your safety sensors matter", "Cameras and sensors near the damaged area often need to be checked and calibrated after a repair to work correctly. We check them as part of your repair plan."]);
-    }
     if (a.situation === "redo") {
-      cards.push(["A second look at a previous repair", "Uneven panel gaps, paint that doesn't match or parts that don't line up are common signs of a rushed repair. Bring your car in and we'll inspect it with you."]);
+      cards.push(["A second look at a previous repair", "Uneven gaps, mismatched paint or parts that don't line up are signs of a rushed repair. We'll inspect it with you."]);
+    } else if (a.situation === "collision") {
+      cards.push(["Your safety sensors matter", "Cameras and sensors near the damage often need to be checked and calibrated after a repair. It's part of our repair plan."]);
+    } else if (a.timing === "asap") {
+      cards.push(["Need it back fast?", "Tell us when we call. We'll see your car at the earliest time and give you a realistic timeline from day one."]);
     }
-    if (a.timing === "asap") {
-      cards.push(["Need it back fast?", "Let us know when we call. We'll find the earliest time to see your car and give you a realistic timeline from day one."]);
-    }
-    cards.push(["Next step: a free in-person estimate", "Every repair is different, so we look at your car in person before giving you a number. Leave your details and we'll call you to book a time.", "next"]);
     return cards;
+  }
+
+  function renderSchedule() {
+    var days = visitDays();
+    if (lead.date && !days.some(function (d) { return d.iso === lead.date; })) { lead.date = ""; lead.time = ""; }
+    return '<fieldset class="field pick"><legend>Pick a day</legend>' +
+        '<div class="days" role="group" aria-label="Visit day">' + days.map(function (d) {
+          return '<button type="button" class="day" data-date="' + d.iso + '" aria-pressed="' + (lead.date === d.iso) + '" aria-label="' + esc(d.long) + '">' +
+            '<span class="dow">' + esc(d.dow) + '</span><span class="md">' + esc(d.md) + "</span></button>";
+        }).join("") + "</div></fieldset>" +
+      '<fieldset class="field pick"><legend>Pick a time</legend>' +
+        '<div class="slots" id="slots" role="group" aria-label="Visit time">' + renderSlots() + "</div>" +
+        '<p class="err" id="e-visit" aria-live="polite"></p></fieldset>';
+  }
+  function renderSlots() {
+    if (!lead.date) return '<p class="slots-empty">Choose a day to see open times.</p>';
+    return slotsFor(lead.date).map(function (t) {
+      return '<button type="button" class="slot" data-time="' + t + '" aria-pressed="' + (lead.time === t) + '">' + t + "</button>";
+    }).join("");
   }
 
   function renderResult() {
     var a = payloadAnswers();
     var title = a.make && a.make !== "Other" ? "Here's what matters for your " + a.make + " repair" : "Here's what matters for your repair";
     var cards = buildCards(a).map(function (c, i) {
-      return '<article class="card' + (c[2] ? " " + c[2] : "") + '"><span class="num" aria-hidden="true">' + (i < 9 ? "0" : "") + (i + 1) + "</span>" +
-        "<h3>" + esc(c[0]) + '</h3><span class="rule" aria-hidden="true"></span><p>' + esc(c[1]) + "</p></article>";
+      return '<article class="card"><span class="num" aria-hidden="true">0' + (i + 1) + "</span>" +
+        "<div><h3>" + esc(c[0]) + "</h3><p>" + esc(c[1]) + "</p></div></article>";
     }).join("");
 
     return backButton() +
@@ -486,9 +612,12 @@
       '<span class="rule" aria-hidden="true"></span>' +
       '<div class="cards">' + cards + "</div>" +
       '<form class="form-card" id="lead-form" novalidate>' +
-        "<h3>Request a call to book your visit</h3>" +
+        '<p class="eyebrow green">Next step</p>' +
+        "<h3>Book your free in-person estimate</h3>" +
         '<span class="rule" aria-hidden="true"></span>' +
+        '<p class="form-intro">Every repair is different, so we look at your car in person before giving you a number. Pick a time and we\'ll call to confirm.</p>' +
         '<div class="hp" aria-hidden="true"><label for="f-company">Company</label><input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off"></div>' +
+        renderSchedule() +
         '<div class="field"><label for="f-name">First name</label>' +
           '<input id="f-name" name="name" type="text" autocomplete="given-name" required aria-describedby="e-name" value="' + esc(lead.name) + '">' +
           '<p class="err" id="e-name" aria-live="polite"></p></div>' +
@@ -498,12 +627,6 @@
         '<div class="field"><label for="f-email">Email <span class="opt-tag">(optional)</span></label>' +
           '<input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="e-email" value="' + esc(lead.email) + '">' +
           '<p class="err" id="e-email" aria-live="polite"></p></div>' +
-        '<div class="field"><label for="f-time">Best time to call</label>' +
-          '<select id="f-time" name="best_time">' +
-            ["", "Morning", "Midday", "Afternoon"].map(function (t) {
-              return '<option value="' + t + '"' + (lead.best_time === t ? " selected" : "") + ">" + (t || "No preference") + "</option>";
-            }).join("") +
-          "</select></div>" +
         '<button type="submit" class="btn" id="f-submit">Request my appointment</button>' +
         '<p class="form-error" id="form-error" role="alert"></p>' +
         '<p class="call">Prefer to talk now? Call <a href="' + PHONE_TEL + '">' + PHONE_DISPLAY + "</a>" +
@@ -517,7 +640,8 @@
     return '<p class="eyebrow green">Request received</p>' +
       '<h2>Thanks, <span id="done-name"></span>! We\'ll call you soon.</h2>' +
       '<span class="rule" aria-hidden="true"></span>' +
-      '<p class="lead">Our team will reach out during business hours (Monday to Friday, 7 AM to 5 PM) to schedule your visit. If it\'s urgent, call us at <a href="' + PHONE_TEL + '">' + PHONE_DISPLAY + "</a>.</p>" +
+      '<div class="visit-box"><span class="visit-label">Requested visit</span><span class="visit-when" id="done-when"></span></div>' +
+      '<p class="lead">Our team will call you during business hours (Monday to Friday, 7 AM to 5 PM) to confirm your visit. If it\'s urgent, call us at <a href="' + PHONE_TEL + '">' + PHONE_DISPLAY + "</a>.</p>" +
       proofList(["15+ factory certifications", "We work for you, not the insurance company"], "done-proof");
   }
 
@@ -526,7 +650,6 @@
     return {
       situation: answers.situation || "",
       make: answers.make || "",
-      adas: answers.adas || "",
       insurance: answers.insurance || "",
       referral: answers.insurance === "self" ? "" : (answers.referral || ""),
       timing: answers.timing || ""
@@ -570,13 +693,30 @@
     setErr(f.email, emailOk ? "" : "Please enter a valid email address.");
     if (!emailOk) firstBad = firstBad || f.email;
 
+    var visitOk = !!(lead.date && lead.time);
+    document.getElementById("e-visit").textContent = visitOk ? "" : "Please pick a day and time for your visit.";
+    if (!visitOk) firstBad = firstBad || document.querySelector(lead.date ? ".slot" : ".day");
+
     if (firstBad) { firstBad.focus(); return null; }
-    return { name: name, phone: phone, email: email, best_time: f.best_time.value };
+    return { name: name, phone: phone, email: email };
+  }
+
+  function pickDay(iso) {
+    lead.date = iso;
+    lead.time = "";
+    document.querySelectorAll(".day").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-date") === iso)); });
+    document.getElementById("slots").innerHTML = renderSlots();
+  }
+  function pickTime(t) {
+    lead.time = t;
+    document.querySelectorAll(".slot").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-time") === t)); });
+    document.getElementById("e-visit").textContent = "";
   }
 
   function finish(name) {
     go("done");
     document.getElementById("done-name").textContent = name;
+    document.getElementById("done-when").textContent = dayLong(lead.date) + " at " + lead.time;
   }
 
   function submit(e) {
@@ -600,7 +740,8 @@
       name: data.name,
       phone: data.phone,
       email: data.email,
-      best_time: data.best_time,
+      appointment_date: lead.date,
+      appointment_time: lead.time,
       answers: a
     };
     TRACK_KEYS.forEach(function (k) { payload[k] = attribution[k] || ""; });
@@ -635,6 +776,9 @@
     var action = el.getAttribute("data-action");
     if (action === "start") return go("situation");
     if (action === "back") return back();
+    if (action === "continue") return go(nextAfter(current));
+    if (el.hasAttribute("data-date")) return pickDay(el.getAttribute("data-date"));
+    if (el.hasAttribute("data-time")) return pickTime(el.getAttribute("data-time"));
     var q = el.getAttribute("data-q");
     if (q) {
       answers[q] = el.getAttribute("data-v");
